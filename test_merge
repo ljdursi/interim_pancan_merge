@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# Tests a random sampling of merged calls against the original callsets
+#
+
+readonly NSAMPLES=100
+
+#SNVS:
+readonly SNV_MERGE_DIR=annotated/snv_mnv
+
+merged_samples=$( ls $SNV_MERGE_DIR/*vcf \
+            | sort -R \
+            | head -n ${NSAMPLES} )
+
+for merged in $merged_samples
+do
+    sample=$( basename $merged | cut -f 1 -d . )
+    echo -n "${sample}: "
+    filenamelist=$( ./analysis/filenames-from-sample.sh $sample snv_mnv )
+    read -r -a filenames <<< "${filenamelist}"
+    ./analysis/verify_vcf.py $merged \
+        -b ${filenames[0]} \
+        -d ${filenames[1]} \
+        -s <( zcat ${filenames[2]} | sed '/=$/d' ) \
+        -m ${filenames[3]}
+done
