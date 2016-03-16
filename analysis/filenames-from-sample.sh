@@ -33,8 +33,6 @@ broadfile=$( find $BROAD_DIR -type f -name "${SAMPLE}*somatic.${VARIANT}.vcf.gz"
 if [ ${VARIANT} == "snv_mnv" ]
 then
     musefile=$( find $MUSE_DIR -type f -name "${SAMPLE}*somatic.${VARIANT}.vcf.gz" )
-    echo $broadfile $dkfzfile $musefile $sangerfile
-else
-    echo $broadfile $dkfzfile $sangerfile
 fi
 
+echo $broadfile $dkfzfile $sangerfile $musefile

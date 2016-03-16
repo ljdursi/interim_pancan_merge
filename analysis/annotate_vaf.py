@@ -13,16 +13,16 @@ def get_vaf(record, broad=False, sanger=False, muse=False, dkfz=False, SNV=True)
         Indels not yet implemented."""
     if SNV:
         if broad:
-            return record.INFO['tumor_f']
+            return float(record.INFO['tumor_f'][0])
         if dkfz:
             return record.INFO['AF'][1]
         if sanger:
-            return record.FORMAT['PM'][1]
+            return record.samples[1]['PM']
         if muse:
-            return 1.0*record.FORMAT['AD'][1]/record.FORMAT['DP']
-        return -1.
+            return 1.0*record.samples[0]['AD'][1]/record.samples[0]['DP']
+        return -100.
     else:  #indel
-        return -1.
+        return -100.
 
 def populate_dict(filename, *args, **kwargs):
     """
@@ -38,7 +38,7 @@ def populate_dict(filename, *args, **kwargs):
             continue
         vaf = get_vaf(variant, *args, **kwargs)
         for alt in variant.ALT:
-            vaf_dict[(variant.CHROM, variant.POS, variant.REF, alt)] = vaf
+            vaf_dict[(variant.CHROM, variant.POS, variant.REF, str(alt))] = vaf
     return vaf_dict
 
 def main():
@@ -62,7 +62,7 @@ def main():
     vcf_reader = vcf.Reader(args.mergedvcf)
     vcf_writer = vcf.Writer(args.output, vcf_reader)
     for variant in vcf_reader:
-        key = variant.CHROM, variant.POS, variant.REF, variant.ALT[0]
+        key = variant.CHROM, variant.POS, variant.REF, str(variant.ALT[0])
         vafs = [vaf_dict[key]
                 for vaf_dict in dicts
                 if key in vaf_dict]
