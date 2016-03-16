@@ -1,0 +1,30 @@
+#!/bin/bash
+
+readonly BASEDIR=/oicr/data/pancanxfer
+readonly SANGER_DIR=${BASEDIR}/Sanger_workflow_variants/batch07/
+readonly DKFZ_DIR=${BASEDIR}/DKFZ_EMBL_workflow_variants/
+readonly MUSE_DIR=${BASEDIR}/Broad_workflow_variants/batch02/muse_vcf/
+readonly BROAD_DIR=${BASEDIR}/Broad_workflow_variants/batch02/broad_vcf/
+
+function sample_and_filename {
+    local directory=$1
+    local variant=$2
+    if [ -d ${directory} ]
+    then
+        while IFS='' read -r -d '' path
+        do
+            local sample=$( basename $path | cut -f 1 -d . )
+            echo $sample $path
+        done < <( find ${directory} -type f -name "*.somatic.${variant}.vcf.gz" -print0)
+    fi
+}
+
+sample_and_filename ${BROAD_DIR} snv_mnv | sort > tmp.snv.broad
+sample_and_filename ${DKFZ_DIR} snv_mnv | sort > tmp.snv.dkfz
+sample_and_filename ${SANGER_DIR} snv_mnv | sort > tmp.snv.sanger
+sample_and_filename ${MUSE_DIR} snv_mnv | sort > tmp.snv.muse
+
+join tmp.snv.broad tmp.snv.dkfz > tmp.snv.broad_dkfz
+join tmp.snv.broad_dkfz tmp.snv.sanger > tmp.snv.broad_dkfz_sanger
+join tmp.snv.broad_dkfz_sanger tmp.snv.muse > filelist.snv.txt
+rm tmp.snv.{broad,dkfz,sanger,muse,broad_dkfz,broad_dkfz_sanger}
