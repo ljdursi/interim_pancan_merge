@@ -29,10 +29,10 @@ join tmp.snv.broad_dkfz tmp.snv.sanger > tmp.snv.broad_dkfz_sanger
 join tmp.snv.broad_dkfz_sanger tmp.snv.muse > filelist.snv_mnv.txt
 rm tmp.snv.{broad,dkfz,sanger,muse,broad_dkfz,broad_dkfz_sanger}
 
-sample_and_filename ${BROAD_DIR} indel | sort > tmp.snv.broad
-sample_and_filename ${DKFZ_DIR} indel | sort > tmp.snv.dkfz
-sample_and_filename ${SANGER_DIR} indel | sort > tmp.snv.sanger
+sample_and_filename ${BROAD_DIR} indel | sort > tmp.indel.broad
+sample_and_filename ${DKFZ_DIR} indel | sort > tmp.indel.dkfz
+sample_and_filename ${SANGER_DIR} indel | sort > tmp.indel.sanger
 
 join tmp.indel.broad tmp.indel.dkfz > tmp.indel.broad_dkfz
 join tmp.indel.broad_dkfz tmp.indel.sanger > filelist.indel.txt
-rm tmp.indel.{broad,dkfz,sanger,broad_dkfz,broad_dkfz_sanger}
+rm tmp.indel.{broad,dkfz,sanger,broad_dkfz}
