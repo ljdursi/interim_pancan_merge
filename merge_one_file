@@ -54,7 +54,7 @@ fi
 if [ ! -z ${musefile} ] && [ -f ${musefile} ]
 then
     mergevcf -l broad,dkfz,sanger,muse -n -m 2 \
-      ${broadfile} ${dkfzfile} <( zcat ${sangerfile} | grep -v "=$" ) ${musefile} \
+        ${broadfile} ${dkfzfile} <( zcat ${sangerfile} | grep -v "=$" ) <( zcat ${musefile} | sed -e 's/Tier[0-9]/PASS/' ) \
       | grep -v "Callers=muse;NumCallers=1" \
       > tmpfile.${SAMPLE}.${VARIANT}
 else
