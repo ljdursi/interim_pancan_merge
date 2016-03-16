@@ -8,6 +8,7 @@ readonly NSAMPLES=100
 #SNVS:
 readonly SNV_MERGE_DIR=annotated/snv_mnv
 
+# test with python
 merged_samples=$( ls $SNV_MERGE_DIR/*vcf \
             | sort -R \
             | head -n ${NSAMPLES} )
@@ -24,3 +25,9 @@ do
         -s <( zcat ${filenames[2]} | sed '/=$/d' ) \
         -m ${filenames[3]}
 done
+
+# test with bash
+ls ${SNV_MERGE_DIR}/*vcf \
+    | sort -R \
+    | head -n ${NSAMPLES} \
+    | xargs -I {} ./analysis/double_check.sh {}
