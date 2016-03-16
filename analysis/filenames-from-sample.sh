@@ -26,13 +26,17 @@ then
     exit
 fi
 
-sangerfile=$( find $SANGER_DIR -type f -name "${SAMPLE}*somatic.${VARIANT}.vcf.gz" )
-dkfzfile=$( find $DKFZ_DIR -type f -name "${SAMPLE}*somatic.${VARIANT}.vcf.gz" )
-broadfile=$( find $BROAD_DIR -type f -name "${SAMPLE}*somatic.${VARIANT}.vcf.gz" )
-
-if [ ${VARIANT} == "snv_mnv" ]
+if [ -f filelist.${VARIANT}.txt ]
 then
-    musefile=$( find $MUSE_DIR -type f -name "${SAMPLE}*somatic.${VARIANT}.vcf.gz" )
-fi
+    grep $SAMPLE filelist.${VARIANT}.txt | awk '{print $2, $3, $4, $5}'
+else
+    sangerfile=$( find $SANGER_DIR -type f -name "${SAMPLE}*somatic.${VARIANT}.vcf.gz" )
+    dkfzfile=$( find $DKFZ_DIR -type f -name "${SAMPLE}*somatic.${VARIANT}.vcf.gz" )
+    broadfile=$( find $BROAD_DIR -type f -name "${SAMPLE}*somatic.${VARIANT}.vcf.gz" )
 
-echo $broadfile $dkfzfile $sangerfile $musefile
+    if [ ${VARIANT} == "snv_mnv" ]
+    then
+        musefile=$( find $MUSE_DIR -type f -name "${SAMPLE}*somatic.${VARIANT}.vcf.gz" )
+    fi
+    echo $broadfile $dkfzfile $sangerfile $musefile
+fi

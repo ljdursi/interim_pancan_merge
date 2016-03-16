@@ -8,6 +8,10 @@ def passed(record):
     """ Did this variant pass all of its filters? """
     return record.FILTER is None or len(record.FILTER) == 0 or record.FILTER == "PASS"
 
+def round_three(num):
+    scale=1000
+    return int(num*scale)*1./scale
+
 def get_vaf(record, broad=False, sanger=False, muse=False, dkfz=False, SNV=True):
     """ Returns the VAF corresponding to the record and the caller.
         Indels not yet implemented."""
@@ -66,9 +70,10 @@ def main():
         vafs = [vaf_dict[key]
                 for vaf_dict in dicts
                 if key in vaf_dict]
+        roundvafs = [round_three(vaf) for vaf in vafs]
         if len(vafs) > 0:
-            variant.INFO['VAFs'] = vafs
-            variant.INFO['medianVAF'] = numpy.median(vafs)
+            variant.INFO['VAFs'] = roundvafs
+            variant.INFO['medianVAF'] = round_three(numpy.median(vafs))
         vcf_writer.write_record(variant)
 
     return 0

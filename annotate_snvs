@@ -1,0 +1,7 @@
+#!/bin/bash
+
+module load parallel
+
+readonly NJOBS=6
+awk '{print $1}' filelist.snv_mnv.txt \
+    | parallel -j $NJOBS ./analysis/merged_snv_vaf_by_sample.sh
