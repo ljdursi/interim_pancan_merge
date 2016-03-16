@@ -4,9 +4,10 @@ module load gcc/4.8.1 openblas python-packages/2
 module load parallel
 
 readonly ALLVARIANTS="snv_mnv indel"
-readonly NJOBS=6
+readonly DEFNJOBS=6
 
 variants=${1:-$ALLVARIANTS}
+NJOBS=${2:-$DEFNJOBS}
 
 echo "Merging variants: ${variants}"
 
