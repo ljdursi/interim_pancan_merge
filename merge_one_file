@@ -1,0 +1,70 @@
+#!/bin/bash
+readonly SAMPLE=$1
+readonly VARIANT=$2
+readonly OUTPUT=$3
+readonly USAGE="Usage: $0 sample-id snv_mnv|indel output-file"
+
+if [ -z ${SAMPLE} ] || [ -z ${VARIANT} ] || [ -z ${OUTPUT} ]
+then
+    >&2 echo "${USAGE}"
+    >&2 echo "  merges the variant files corresponding to the sample"
+    >&2 echo "invocation: $0 $1 $2 $3"
+    exit
+fi
+
+if [ ${VARIANT} != "snv_mnv" ] && [ ${VARIANT} != "indel" ]
+then
+    >&2 echo "${USAGE}"
+    >&2 echo "  second argument must be one of snv_mnv or indel"
+    >&2 echo "  second argument was: <${VARIANT}>"
+    >&2 echo "invocation: $0 $1 $2 $3"
+    exit
+fi
+
+readonly line=$( ./analysis/filenames-from-sample.sh ${SAMPLE} ${VARIANT} )
+IFS=' ' read -r -a filenames <<< "${line}"
+readonly broadfile=${filenames[0]}
+readonly dkfzfile=${filenames[1]}
+readonly sangerfile=${filenames[2]}
+readonly musefile=${filenames[3]}
+
+echo -n "${SAMPLE}: "
+
+# need input files to exist
+if [ ! -f $dkfzfile ] || [ ! -f $sangerfile ] || [ ! -f $broadfile ]
+then
+   echo "skipping - nofile"
+   exit 0
+fi
+
+if [ $VARIANT == "snv_mnv" ] && [ ! -f $musefile ]
+then
+  echo "skipping - nomusefile"
+  exit 0
+fi
+
+# don't overwrite
+if [ -f $OUTPUT ] && [ -s $OUTPUT ]
+then
+  echo "skipping - already done"
+  exit 0
+fi
+
+
+if [ ! -z ${musefile} ] && [ -f ${musefile} ]
+then
+    mergevcf -l broad,dkfz,sanger,muse -n -m 2 \
+      ${broadfile} ${dkfzfile} <( zcat ${sangerfile} | grep -v "=$" ) ${musefile} \
+      | grep -v "Callers=muse;NumCallers=1" \
+      > tmpfile.${SAMPLE}.${VARIANT}
+else
+    mergevcf -l broad,dkfz,sanger -n -m 2 \
+      ${broadfile} ${dkfzfile} <( zcat ${sangerfile} | grep -v "=$" ) \
+      > tmpfile.${SAMPLE}.${VARIANT}
+fi
+
+grep "^#" tmpfile.${SAMPLE}.${VARIANT} > $OUTPUT
+grep -v "^#" tmpfile.${SAMPLE}.${VARIANT} | sort -k1,1d -k2,2n >> $OUTPUT
+rm tmpfile.${SAMPLE}.${VARIANT}
+
+echo "done"

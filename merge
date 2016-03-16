@@ -1,15 +1,10 @@
 #!/bin/bash
-
-readonly BASEDIR=/oicr/data/pancanxfer
-readonly SANGER_DIR=${BASEDIR}/Sanger_workflow_variants/batch07/
-readonly DKFZ_DIR=${BASEDIR}/DKFZ_EMBL_workflow_variants/
-readonly MUSE_DIR=${BASEDIR}/Broad_workflow_variants/batch02/muse_vcf/
-readonly BROAD_DIR=${BASEDIR}/Broad_workflow_variants/batch02/broad_vcf/
-
 module load python/2.7.2
 module load gcc/4.8.1 openblas python-packages/2
+module load parallel
 
 readonly ALLVARIANTS="snv_mnv indel"
+readonly NJOBS=6
 
 variants=${1:-$ALLVARIANTS}
 
@@ -20,39 +15,6 @@ do
     mkdir -p results/${variant}/
     suffix=".somatic.${variant}.vcf.gz"
 
-    while IFS='' read -r -d '' broadfile; do
-      filename=$( basename $broadfile )
-      sample=$( echo $filename | cut -f 1 -d \. )
-
-      dkfzfile=$( find ${DKFZ_DIR} -type f -name "${sample}.*${suffix}" -print | head -n 1 )
-      sangerfile=$( find ${SANGER_DIR} -type f -name "${sample}.*${suffix}" -print | head -n 1 )
-      musefile=$( find ${MUSE_DIR} -type f -name "${sample}.*${suffix}" -print | head -n 1 )
-
-      if [ ! -f $dkfzfile ] || [ ! -f $sangerfile ] 
-      then
-          continue
-      fi
-
-      if [ $variant == "snv_mnv" ] && [ ! -f $musefile ]
-      then
-          continue
-      fi
-
-      if [ -f results/${variant}/${sample}.merged.somatic.${variant}.vcf ]
-      then
-          continue
-      fi
-
-      echo "${sample}"
-
-      mergevcf -l broad,dkfz,sanger,muse -n -m 2 \
-          ${broadfile} ${dkfzfile} <( zcat ${sangerfile} | grep -v "=$" ) ${musefile} \
-          | grep -v "Callers=muse;NumCallers=1" \
-          > tmpfile.$$
-
-      grep "^#" tmpfile.$$ > results/${variant}/${sample}.merged.somatic.${variant}.vcf
-      grep -v "^#" tmpfile.$$ | sort -k1,1d -k2,2n >> results/${variant}/${sample}.merged.somatic.${variant}.vcf
-      rm tmpfile.$$
-
-    done < <(find ${BROAD_DIR} -type f -name "*${suffix}" -print0)
+    awk '{print $1}' filelist.${variant}.txt | \
+        parallel -j ${NJOBS} ./merge_one_file {} ${variant} results/${variant}/{}.merged.somatic.${variant}.vcf
 done
