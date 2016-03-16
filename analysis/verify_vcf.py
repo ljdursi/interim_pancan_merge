@@ -36,7 +36,7 @@ def compare_against_merged(calldict, mergedict, ncalls=1000):
     return True
 
 def compare_merged_against_callsets(mergedict, calldicts, ncalls=1000):
-    ncalls = max(len(mergedict), ncalls)
+    ncalls = min(len(mergedict), ncalls)
     variants = random.sample(mergedict.keys(), ncalls)
     allcallers = calldicts.keys()
 
