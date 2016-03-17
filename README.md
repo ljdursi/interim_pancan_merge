@@ -7,9 +7,9 @@ Relies on http://github.com/ljdursi/mergevcf
 
 To use:
 ```
-    ./gen_filelist      # map donor ids to files
-    ./merge             # merge the vcfs and label by number of callers
-    ./annotate_snvs     # annotate with VAFs from callers
-    ./annotate_indels   # annotate with VAFs from callers
-    ./test_merge        # to make sure merge went well
+ $ ./gen_filelist      # map donor ids to files; depends on location of files on local FS
+ $ ./merge             # merge the vcfs and label by number of callers
+ $ ./annotate_snvs     # annotate with VAFs from callers
+ $ ./annotate_indels   # annotate with VAFs from callers
+ $ ./test_merge        # trust, but verify
 ```
