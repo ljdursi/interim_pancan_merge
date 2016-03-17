@@ -43,12 +43,12 @@ def compare_merged_against_callsets(mergedict, calldicts, ncalls=1000):
     for variant in variants:
         for caller in allcallers:
             if caller in mergedict[variant] and not variant in calldicts[caller]:
-                print("Error: "+variant+" found in merged set for callers "+mergedict[variant]+
-                       "not found in callset for "+caller+".")
+                print("Error: "+str(variant)+" found in merged set for callers "+str(mergedict[variant])+
+                       "not found in callset for "+str(caller)+".")
                 return False
             if not caller in mergedict[variant] and variant in calldicts[caller]:
-                print("Error: "+variant+" not found in merged set for callers "+mergedict[variant]+
-                       "but found in callset for "+caller+".")
+                print("Error: "+str(variant)+" not found in merged set for callers "+str(mergedict[variant])+
+                       "but found in callset for "+str(caller)+".")
                 return False
     return True
 
@@ -70,7 +70,7 @@ def main():
     dicts = {"broad":populate_dict(args.broad, "broad"),
              "dkfz":populate_dict(args.dkfz, "dkfz"),
              "sanger":populate_dict(args.sanger, "sanger"),
-             "muse":populate_dict(args.muse, "muse")}
+             "muse":populate_dict(args.muse, "muse", onlypasses=False)}
 
     mergeddict = populate_dict(args.mergedvcf, "merged", onlypasses=False)
 
