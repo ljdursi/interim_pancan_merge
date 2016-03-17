@@ -27,7 +27,11 @@ def get_vaf(record, broad=False, sanger=False, muse=False, dkfz=False, SNV=True)
         return None
     else:  #indel
         if broad:
-            return float(record.INFO['TFRAC'][0])
+            try:
+                value = float(record.INFO['TFRAC'][0])
+            except:
+                value = None
+            return value
         if dkfz:
             return float(record.INFO['FR'][0])
         if sanger:
