@@ -3,6 +3,9 @@
 # Tests a random sampling of merged calls against the original callsets
 #
 
+module load python/2.7.2
+module load gcc/4.8.1 openblas python-packages/2
+
 readonly NSAMPLES=100
 
 readonly SNV_MERGE_DIR=annotated/snv_mnv

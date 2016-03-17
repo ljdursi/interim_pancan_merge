@@ -1,21 +1,31 @@
 #!/bin/bash
 
 readonly MERGEDFILE=$1
+readonly VARIANT=$2
 
 if [ ! -f ${SAMPLE} ] 
 then
-    >&2 echo "Usage: $0 mergedfile"
+    >&2 echo "Usage: $0 mergedfile snv_mnv|indel"
     >&2 echo "  checks the merged VCF against the input callsets"
-    >&2 echo "invocation: $0 $1"
+    >&2 echo "invocation: $0 $1 $2"
+    exit
+fi
+
+if [ ${VARIANT} != "snv_mnv" ] && [ ${VARIANT} != "indel" ]
+then
+    >&2 echo "Usage: $0 mergedfile snv_mnv|indel"
+    >&2 echo "  checks the merged VCF against the input callsets"
+    >&2 echo "invocation: $0 $1 $2"
+    >&2 echo "invalid variant type: ${VARIANT}"
     exit
 fi
 
 function passvariants {
-    awk '($1 !~ /^#/) && ($7 == "." || $7 == "PASS") { split($5, alts, ","); for (alt in alts) {printf "%s_%s_%s_%s\n",$1,$2,$4,alt;}}' | sort
+    awk '($1 !~ /^#/) && ($7 == "." || $7 == "PASS") { split($5, alts, ","); for (i in alts) {printf "%s_%s_%s_%s\n",$1,$2,$4,alts[i];}}' | sort
 }
 
 function allvariants {
-    awk '($1 !~ /^#/) {split($5, alts, ","); for (alt in alts) {printf "%s_%s_%s_%s\n",$1,$2,$4,alt;}}' | sort
+    awk '($1 !~ /^#/) {split($5, alts, ","); for (i in alts) {printf "%s_%s_%s_%s\n",$1,$2,$4,alts[i];}}' | sort
 }
 
 function compare {
@@ -38,7 +48,7 @@ function compare {
 }
 
 readonly SAMPLE=$( basename $MERGEDFILE | cut -f 1 -d . )
-readonly filenamelist=$( ./analysis/filenames-from-sample.sh $SAMPLE snv_mnv )
+readonly filenamelist=$( ./analysis/filenames-from-sample.sh $SAMPLE $VARIANT )
 IFS=' ' read -r -a filenames <<< "${filenamelist}"
 
 compare $MERGEDFILE broad ${filenames[0]}
