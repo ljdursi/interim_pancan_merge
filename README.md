@@ -6,7 +6,7 @@ using a simple "2 of m" approach.
 Relies on http://github.com/ljdursi/mergevcf
 
 To use:
-```
+```bash
  $ ./gen_filelist      # map donor ids to files; depends on location of files on local FS
  $ ./merge             # merge the vcfs and label by number of callers
  $ ./annotate_snvs     # annotate with VAFs from callers
