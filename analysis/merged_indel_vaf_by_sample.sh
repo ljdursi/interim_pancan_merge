@@ -1,7 +1,7 @@
 #!/bin/bash
 
 readonly SAMPLE=$1
-readonly variant="snv_mnv"
+readonly variant="indel"
 
 if [ -z ${SAMPLE} ] 
 then
@@ -31,7 +31,7 @@ mkdir -p annotated/${variant}
     -b ${filenames[0]} \
     -d ${filenames[1]} \
     -s <( zcat ${filenames[2]} | sed '/=$/d' ) \
-    -m ${filenames[3]} \
+    -i \
     | sed -e '/#CHROM/i\
 ##INFO=<ID=VAFs,Number=.,Type=Float,Description="VAFs identified by callers, in order of callers in Callers record">\
 ##INFO=<ID=medianVAF,Number=1,Type=Float,Description="median VAF identified by callers">\
