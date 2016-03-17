@@ -25,7 +25,7 @@ function passvariants {
 }
 
 function allvariants {
-    awk '($1 !~ /^#/) {split($5, alts, ","); for (i in alts) {printf "%s_%s_%s_%s\n",$1,$2,$4,alts[i];}}' | sort
+    awk '($1 !~ /^#/) {split($5, alts, ","); for (i in alts) {printf "%s_%s_%s_%s\n",$1,$2,$4,alts[i];}}' | sort 
 }
 
 function compare {
