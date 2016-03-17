@@ -18,13 +18,13 @@ echo "SNVS: Method 1"
 ls ${SNV_MERGE_DIR}/*vcf \
     | sort -R \
     | head -n ${NSAMPLES} \
-    | xargs -I {} ./analysis/double_check.sh {}
+    | xargs -I {} ./analysis/double_check.sh {} snv_mnv
 
 echo "INDELs: Method 1"
 ls ${INDEL_MERGE_DIR}/*vcf \
     | sort -R \
     | head -n ${NSAMPLES} \
-    | xargs -I {} ./analysis/double_check.sh {}
+    | xargs -I {} ./analysis/double_check.sh {} indel
 
 # test with python
 merged_samples=$( ls $SNV_MERGE_DIR/*vcf \
