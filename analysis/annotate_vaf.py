@@ -28,7 +28,7 @@ def get_vaf(record, broad=False, sanger=False, muse=False, dkfz=False, SNV=True)
     else:  #indel
         if broad:
             try:
-                value = float(record.INFO['TFRAC'][0])
+                value = float(record.INFO['TFRAC'])
             except:
                 value = None
             return value
