@@ -33,10 +33,11 @@ function compare {
     local callername=$2
     local callerfile=$3
 
+    # I'd prefer not to have the uniq in here, but sanger indel caller will sometimes double-report an indel variant
     n_caller_in_merged=$( grep $callername $mergedfilename | wc -l )
-    n_caller_in_individual=$( zcat $callerfile | passvariants | wc -l )
+    n_caller_in_individual=$( zcat $callerfile | passvariants | uniq | wc -l )
     n_in_common=$( join <( grep $callername $mergedfilename | allvariants ) \
-                        <( zcat $callerfile | passvariants )  \
+                        <( zcat $callerfile | passvariants | uniq )  \
                      | wc -l )
 
     if [ $n_caller_in_merged -ne $n_caller_in_individual ] || [ $n_in_common -ne $n_caller_in_merged ]
