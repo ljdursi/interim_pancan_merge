@@ -24,9 +24,15 @@ def get_vaf(record, broad=False, sanger=False, muse=False, dkfz=False, SNV=True)
             return record.samples[1]['PM']
         if muse:
             return 1.0*record.samples[0]['AD'][1]/record.samples[0]['DP']
-        return -100.
+        return None
     else:  #indel
-        return -100.
+        if broad:
+            return float(record.INFO['TFRAC'][0])
+        if dkfz:
+            return float(record.INFO['FR'][0])
+        if sanger:
+            return None  
+        return None
 
 def populate_dict(filename, *args, **kwargs):
     """
@@ -69,7 +75,8 @@ def main():
         key = variant.CHROM, variant.POS, variant.REF, str(variant.ALT[0])
         vafs = [vaf_dict[key]
                 for vaf_dict in dicts
-                if key in vaf_dict]
+                if key in vaf_dict
+                if vaf_dict[key] is not None]
         roundvafs = [round_three(vaf) for vaf in vafs]
         if len(vafs) > 0:
             variant.INFO['VAFs'] = roundvafs
