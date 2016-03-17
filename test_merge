@@ -5,14 +5,30 @@
 
 readonly NSAMPLES=100
 
-#SNVS:
 readonly SNV_MERGE_DIR=annotated/snv_mnv
+readonly INDEL_MERGE_DIR=annotated/indel
+
+# test with bash
+
+#SNVS:
+echo "SNVS: Method 1"
+ls ${SNV_MERGE_DIR}/*vcf \
+    | sort -R \
+    | head -n ${NSAMPLES} \
+    | xargs -I {} ./analysis/double_check.sh {}
+
+echo "INDELs: Method 1"
+ls ${INDEL_MERGE_DIR}/*vcf \
+    | sort -R \
+    | head -n ${NSAMPLES} \
+    | xargs -I {} ./analysis/double_check.sh {}
 
 # test with python
 merged_samples=$( ls $SNV_MERGE_DIR/*vcf \
             | sort -R \
             | head -n ${NSAMPLES} )
 
+echo "SNVS: Method 2"
 for merged in $merged_samples
 do
     sample=$( basename $merged | cut -f 1 -d . )
@@ -26,8 +42,19 @@ do
         -m ${filenames[3]}
 done
 
-# test with bash
-ls ${SNV_MERGE_DIR}/*vcf \
-    | sort -R \
-    | head -n ${NSAMPLES} \
-    | xargs -I {} ./analysis/double_check.sh {}
+echo "INDELs: Method 2"
+merged_samples=$( ls $INDEL_MERGE_DIR/*vcf \
+            | sort -R \
+            | head -n ${NSAMPLES} )
+
+for merged in $merged_samples
+do
+    sample=$( basename $merged | cut -f 1 -d . )
+    echo -n "${sample}: "
+    filenamelist=$( ./analysis/filenames-from-sample.sh $sample snv_mnv )
+    read -r -a filenames <<< "${filenamelist}"
+    ./analysis/verify_vcf.py $merged \
+        -b ${filenames[0]} \
+        -d ${filenames[1]} \
+        -s <( zcat ${filenames[2]} | sed '/=$/d' ) 
+done
