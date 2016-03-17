@@ -54,7 +54,7 @@ for merged in $merged_samples
 do
     sample=$( basename $merged | cut -f 1 -d . )
     echo -n "${sample}: "
-    filenamelist=$( ./analysis/filenames-from-sample.sh $sample snv_mnv )
+    filenamelist=$( ./analysis/filenames-from-sample.sh $sample indel )
     read -r -a filenames <<< "${filenamelist}"
     ./analysis/verify_vcf.py $merged \
         -b ${filenames[0]} \
