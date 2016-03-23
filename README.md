@@ -8,8 +8,8 @@ Relies on http://github.com/ljdursi/mergevcf
 To use:
 ```bash
  $ ./gen_filelist      # map donor ids to files; depends on location of files on local FS
+ $ ./normalize_indels  # bcftools norm the indel files, generate local copies
  $ ./merge             # merge the vcfs and label by number of callers
- $ ./annotate_snvs     # annotate with VAFs from callers
- $ ./annotate_indels   # annotate with VAFs from callers
+ $ ./annotate          # annotate with VAFs from callers
  $ ./test_merge        # trust, but verify
 ```
