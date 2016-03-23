@@ -1,0 +1,56 @@
+#!/bin/bash
+readonly SAMPLE=$1
+readonly USAGE="Usage: $0 sample-id"
+readonly VARIANT=indel
+
+source paths
+
+if [ -z ${SAMPLE} ] 
+then
+    >&2 echo "${USAGE}"
+    >&2 echo "  normalizes all indel variant files corresponding to the sample"
+    >&2 echo "invocation: $0 $1 $2 $3"
+    exit
+fi
+
+readonly line=$( ./analysis/filenames-from-sample.sh ${SAMPLE} ${VARIANT} )
+IFS=' ' read -r -a filenames <<< "${line}"
+readonly broadfile=${filenames[0]}
+readonly dkfzfile=${filenames[1]}
+readonly sangerfile=${filenames[2]}
+
+function normalize {
+    local in_vcf=$1
+    bcftools norm -c w -m -indels -O v -f ${REFERENCE} ${in_vcf} 2> norm.errs.txt
+}
+
+function newfilename {
+    local in_vcf=$1
+    base=$( basename $in_vcf )
+    new=${base/indel/indel_normed}
+    echo ${new/.gz/}
+}
+
+# broad - deal with the fact that the format fields are absent
+#  and bcftools and mergevcf don't handle that in the same way
+
+broadnormedfile=$( newfilename ${broadfile} )
+normalize <( zcat ${broadfile} | sed -e 's/		$/	.	.	./' ) \
+    | sed -e '/^[^#]/s/	[^	]*	[^	]*	[^	]*$//' \
+    > ${NORMED_INDEL_DIR}/$( basename ${broadnormedfile} .gz ) 
+
+
+# dkfz - pretty well behaved
+
+dkfznormedfile=$( newfilename ${dkfzfile} )
+normalize ${dkfzfile} \
+    > ${NORMED_INDEL_DIR}/$( basename ${dkfznormedfile} .gz ) 
+
+
+# sanger - has that one header line that ends in '='
+
+sangernormedfile=$( newfilename $sangerfile )
+normalize ${sangerfile} | grep -v "=$" \
+    > ${NORMED_INDEL_DIR}/$( basename ${sangernormedfile} .gz ) 
+
+echo "${SAMPLE} ${NORMED_INDEL_DIR}/${broadnormedfile} ${NORMED_INDEL_DIR}/${dkfznormedfile} ${NORMED_INDEL_DIR}/${sangernormedfile}"

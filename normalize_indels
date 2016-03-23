@@ -1,0 +1,16 @@
+#!/bin/bash
+readonly DEFNJOBS=6
+
+variants=${1:-$ALLVARIANTS}
+NJOBS=${2:-$DEFNJOBS}
+
+source paths
+module load parallel
+module load bcftools
+
+echo "Normalizing indels"
+
+mkdir -p ${NORMED_INDEL_DIR}
+
+awk '{print $1}' filelist.indel.txt | \
+    parallel -j ${NJOBS} ./analysis/normalize_one_indel_sample {} > filelist.indel_normed.txt
