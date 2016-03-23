@@ -21,7 +21,7 @@ readonly sangerfile=${filenames[2]}
 
 function normalize {
     local in_vcf=$1
-    bcftools norm -c w -m -indels -O v -f ${REFERENCE} ${in_vcf} 2> norm.errs.txt
+    bcftools norm -c w -m -indels -O v -f ${REFERENCE} ${in_vcf} 2>> norm.errs.txt
 }
 
 function newfilename {
@@ -31,26 +31,34 @@ function newfilename {
     echo ${new/.gz/}
 }
 
+function zip_and_index {
+    local dir=$1
+    local vcf=$2
+
+    ( cd $dir; bgzip $vcf; tabix -p vcf ${vcf}.gz )
+}
+
 # broad - deal with the fact that the format fields are absent
 #  and bcftools and mergevcf don't handle that in the same way
 
 broadnormedfile=$( newfilename ${broadfile} )
 normalize <( zcat ${broadfile} | sed -e 's/		$/	.	.	./' ) \
     | sed -e '/^[^#]/s/	[^	]*	[^	]*	[^	]*$//' \
-    > ${NORMED_INDEL_DIR}/$( basename ${broadnormedfile} .gz ) 
-
+    > ${NORMED_INDEL_DIR}/${broadnormedfile}
+zip_and_index $NORMED_INDEL_DIR ${broadnormedfile}
 
 # dkfz - pretty well behaved
 
 dkfznormedfile=$( newfilename ${dkfzfile} )
 normalize ${dkfzfile} \
-    > ${NORMED_INDEL_DIR}/$( basename ${dkfznormedfile} .gz ) 
-
+    > ${NORMED_INDEL_DIR}/${dkfznormedfile}
+zip_and_index $NORMED_INDEL_DIR ${dkfznormedfile}
 
 # sanger - has that one header line that ends in '='
 
 sangernormedfile=$( newfilename $sangerfile )
 normalize ${sangerfile} | grep -v "=$" \
-    > ${NORMED_INDEL_DIR}/$( basename ${sangernormedfile} .gz ) 
+    > ${NORMED_INDEL_DIR}/${sangernormedfile}
+zip_and_index $NORMED_INDEL_DIR ${sangernormedfile}
 
-echo "${SAMPLE} ${NORMED_INDEL_DIR}/${broadnormedfile} ${NORMED_INDEL_DIR}/${dkfznormedfile} ${NORMED_INDEL_DIR}/${sangernormedfile}"
+echo "${SAMPLE} ${NORMED_INDEL_DIR}/${broadnormedfile}.gz ${NORMED_INDEL_DIR}/${dkfznormedfile}.gz ${NORMED_INDEL_DIR}/${sangernormedfile}.gz"

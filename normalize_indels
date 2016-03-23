@@ -1,16 +1,16 @@
 #!/bin/bash
 readonly DEFNJOBS=6
 
-variants=${1:-$ALLVARIANTS}
-NJOBS=${2:-$DEFNJOBS}
+NJOBS=${1:-$DEFNJOBS}
 
 source paths
 module load parallel
 module load bcftools
+module load tabix/0.2.6
 
 echo "Normalizing indels"
 
 mkdir -p ${NORMED_INDEL_DIR}
 
 awk '{print $1}' filelist.indel.txt | \
-    parallel -j ${NJOBS} ./analysis/normalize_one_indel_sample {} > filelist.indel_normed.txt
+    parallel -j ${NJOBS} ./analysis/normalize_one_indel_sample {} >> filelist.indel_normed.txt
