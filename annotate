@@ -1,0 +1,16 @@
+#!/bin/bash
+module load parallel
+
+readonly ALLVARIANTS="snv_mnv indel_normed"
+readonly DEFNJOBS=6
+
+variants=${1:-$ALLVARIANTS}
+NJOBS=${2:-$DEFNJOBS}
+
+echo "Merging variants: ${variants}"
+
+for variant in ${variants}
+do
+    awk '{print $1}' filelist.${variant}.txt \
+        | parallel -j $NJOBS ./analysis/merged_vaf_by_sample.sh
+done

@@ -1,7 +1,0 @@
-#!/bin/bash
-
-module load parallel
-
-readonly NJOBS=${1:-6}
-awk '{print $1}' filelist.indel.txt \
-    | parallel -j $NJOBS ./analysis/merged_indel_vaf_by_sample.sh
