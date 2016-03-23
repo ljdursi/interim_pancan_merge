@@ -1,0 +1,9 @@
+readonly BASEDIR=/oicr/data/pancanxfer
+readonly SANGER_DIR=${BASEDIR}/Sanger_workflow_variants/batch07/
+readonly DKFZ_DIR=${BASEDIR}/DKFZ_EMBL_workflow_variants/
+readonly MUSE_DIR=${BASEDIR}/Broad_workflow_variants/batch02/muse_vcf/
+readonly BROAD_DIR=${BASEDIR}/Broad_workflow_variants/batch02/broad_vcf/
+
+readonly NORMED_INDEL_DIR=./indel_normed_vcfs
+
+readonly REFERENCE=/oicr/data/pancanxfer/ref/genome.fa

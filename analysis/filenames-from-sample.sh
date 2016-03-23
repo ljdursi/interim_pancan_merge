@@ -1,24 +1,20 @@
 #!/bin/bash
 
-readonly BASEDIR=/oicr/data/pancanxfer
-readonly SANGER_DIR=${BASEDIR}/Sanger_workflow_variants/batch07/
-readonly DKFZ_DIR=${BASEDIR}/DKFZ_EMBL_workflow_variants/
-readonly MUSE_DIR=${BASEDIR}/Broad_workflow_variants/batch02/muse_vcf/
-readonly BROAD_DIR=${BASEDIR}/Broad_workflow_variants/batch02/broad_vcf/
+source paths
 
 readonly SAMPLE=$1
 readonly VARIANT=$2
 
 if [ -z ${SAMPLE} ] || [ -z ${VARIANT} ]
 then
-    >&2 echo "Usage: $0 sample-id snv_mnv|indel"
+    >&2 echo "Usage: $0 sample-id snv_mnv|indel|indel_normed"
     >&2 echo "  returns the sanger, dkfz, muse, and broad filenames"
     >&2 echo "  corresponding to the variant calls on that sample"
     >&2 echo "invocation: $0 $1 $2"
     >&2 exit
 fi
 
-if [ ${VARIANT} != "snv_mnv" ] && [ ${VARIANT} != "indel" ]
+if [ ${VARIANT} != "snv_mnv" ] && [ ${VARIANT} != "indel" ] && [ ${VARIANT} != "indel_normed" ]
 then
     >&2 echo "Error: variant $VARIANT unrecognized"
     >&2 echo "       must be one of: snv_mnv indel"

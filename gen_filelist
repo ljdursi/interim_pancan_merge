@@ -1,10 +1,6 @@
 #!/bin/bash
 
-readonly BASEDIR=/oicr/data/pancanxfer
-readonly SANGER_DIR=${BASEDIR}/Sanger_workflow_variants/batch07/
-readonly DKFZ_DIR=${BASEDIR}/DKFZ_EMBL_workflow_variants/
-readonly MUSE_DIR=${BASEDIR}/Broad_workflow_variants/batch02/muse_vcf/
-readonly BROAD_DIR=${BASEDIR}/Broad_workflow_variants/batch02/broad_vcf/
+source paths
 
 function sample_and_filename {
     local directory=$1
