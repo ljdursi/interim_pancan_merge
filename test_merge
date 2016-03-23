@@ -9,7 +9,7 @@ module load gcc/4.8.1 openblas python-packages/2
 readonly NSAMPLES=100
 
 readonly SNV_MERGE_DIR=annotated/snv_mnv
-readonly INDEL_MERGE_DIR=annotated/indel
+readonly INDEL_MERGE_DIR=annotated/indel_normed
 
 # test with bash
 

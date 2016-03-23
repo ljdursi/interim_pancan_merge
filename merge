@@ -3,7 +3,7 @@ module load python/2.7.2
 module load gcc/4.8.1 openblas python-packages/2
 module load parallel
 
-readonly ALLVARIANTS="snv_mnv indel"
+readonly ALLVARIANTS="snv_mnv indel_normed"
 readonly DEFNJOBS=6
 
 variants=${1:-$ALLVARIANTS}
