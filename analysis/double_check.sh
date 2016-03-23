@@ -3,18 +3,19 @@
 readonly MERGEDFILE=$1
 readonly VARIANT=$2
 
-if [ ! -f ${SAMPLE} ] 
+readonly USAGE="Usage: $0 mergedfile snv_mnv|indel|indel_normed
+  checks the merged VCF against the input callset"
+
+if [ ! -f ${MERGEDFILE} ]  || [ -z ${VARIANT} ]
 then
-    >&2 echo "Usage: $0 mergedfile snv_mnv|indel"
-    >&2 echo "  checks the merged VCF against the input callsets"
+    >&2 echo "${USAGE}"
     >&2 echo "invocation: $0 $1 $2"
     exit
 fi
 
-if [ ${VARIANT} != "snv_mnv" ] && [ ${VARIANT} != "indel" ]
+if [ ${VARIANT} != "snv_mnv" ] && [ ${VARIANT} != "indel" ] && [ ${VARIANT} != "indel_normed" ]
 then
-    >&2 echo "Usage: $0 mergedfile snv_mnv|indel"
-    >&2 echo "  checks the merged VCF against the input callsets"
+    >&2 echo "${USAGE}"
     >&2 echo "invocation: $0 $1 $2"
     >&2 echo "invalid variant type: ${VARIANT}"
     exit

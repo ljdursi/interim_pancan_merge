@@ -2,7 +2,7 @@
 readonly SAMPLE=$1
 readonly VARIANT=$2
 readonly OUTPUT=$3
-readonly USAGE="Usage: $0 sample-id snv_mnv|indel output-file"
+readonly USAGE="Usage: $0 sample-id snv_mnv|indel|indel_normed output-file"
 
 if [ -z ${SAMPLE} ] || [ -z ${VARIANT} ] || [ -z ${OUTPUT} ]
 then
@@ -12,10 +12,10 @@ then
     exit
 fi
 
-if [ ${VARIANT} != "snv_mnv" ] && [ ${VARIANT} != "indel" ]
+if [ ${VARIANT} != "snv_mnv" ] && [ ${VARIANT} != "indel" ] && [ ${VARIANT} != "indel_normed" ]
 then
     >&2 echo "${USAGE}"
-    >&2 echo "  second argument must be one of snv_mnv or indel"
+    >&2 echo "  second argument must be one of snv_mnv, indel, or indel_normed"
     >&2 echo "  second argument was: <${VARIANT}>"
     >&2 echo "invocation: $0 $1 $2 $3"
     exit
