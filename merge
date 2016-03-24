@@ -14,7 +14,7 @@ echo "Merging variants: ${variants}"
 for variant in ${variants}
 do
     mkdir -p results/${variant}/
-    suffix="merged.somatic.${variant}.vcf.gz"
+    suffix="merged.somatic.${variant}.vcf"
 
     awk '{print $1}' filelist.${variant}.txt | \
         parallel -j ${NJOBS} ./analysis/merge_one_file {} ${variant} results/${variant}/{}.${suffix}
