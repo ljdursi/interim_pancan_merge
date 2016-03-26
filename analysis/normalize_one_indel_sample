@@ -38,27 +38,44 @@ function zip_and_index {
     ( cd $dir; bgzip $vcf; tabix -p vcf ${vcf}.gz )
 }
 
+output=""
+
 # broad - deal with the fact that the format fields are absent
 #  and bcftools and mergevcf don't handle that in the same way
 
 broadnormedfile=$( newfilename ${broadfile} )
-normalize <( zcat ${broadfile} | sed -e 's/		$/	.	.	./' ) \
-    | sed -e '/^[^#]/s/	[^	]*	[^	]*	[^	]*$//' \
-    > ${NORMED_INDEL_DIR}/${broadnormedfile}
-zip_and_index $NORMED_INDEL_DIR ${broadnormedfile}
+if [ ! -f ${NORMED_INDEL_DIR}/${broadnormedfile}/gz ] 
+then
+    normalize <( zcat ${broadfile} | sed -e 's/		$/	.	.	./' ) \
+        | sed -e '/^[^#]/s/	[^	]*	[^	]*	[^	]*$//' \
+        > ${NORMED_INDEL_DIR}/${broadnormedfile}
+    zip_and_index $NORMED_INDEL_DIR ${broadnormedfile}
+    output="true"
+fi
 
 # dkfz - pretty well behaved
 
 dkfznormedfile=$( newfilename ${dkfzfile} )
-normalize ${dkfzfile} \
-    > ${NORMED_INDEL_DIR}/${dkfznormedfile}
-zip_and_index $NORMED_INDEL_DIR ${dkfznormedfile}
+if [ ! -f ${NORMED_INDEL_DIR}/${dkfznormedfile}.gz ]
+then
+    normalize ${dkfzfile} \
+        > ${NORMED_INDEL_DIR}/${dkfznormedfile}
+    zip_and_index $NORMED_INDEL_DIR ${dkfznormedfile}
+    output="true"
+fi
 
 # sanger - has that one header line that ends in '='
 
 sangernormedfile=$( newfilename $sangerfile )
-normalize ${sangerfile} | grep -v "=$" \
-    > ${NORMED_INDEL_DIR}/${sangernormedfile}
-zip_and_index $NORMED_INDEL_DIR ${sangernormedfile}
+if [ ! -f ${NORMED_INDEL_DIR}/${sangernormedfile}.gz ]
+then
+    normalize ${sangerfile} | grep -v "=$" \
+        > ${NORMED_INDEL_DIR}/${sangernormedfile}
+    zip_and_index $NORMED_INDEL_DIR ${sangernormedfile}
+    output="true"
+fi
 
-echo "${SAMPLE} ${NORMED_INDEL_DIR}/${broadnormedfile}.gz ${NORMED_INDEL_DIR}/${dkfznormedfile}.gz ${NORMED_INDEL_DIR}/${sangernormedfile}.gz"
+if [ $output == "true" ]
+then
+    echo "${SAMPLE} ${NORMED_INDEL_DIR}/${broadnormedfile}.gz ${NORMED_INDEL_DIR}/${dkfznormedfile}.gz ${NORMED_INDEL_DIR}/${sangernormedfile}.gz"
+fi
