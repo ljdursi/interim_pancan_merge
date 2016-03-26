@@ -1,8 +1,8 @@
 readonly BASEDIR=/oicr/data/pancanxfer
-readonly SANGER_DIR=${BASEDIR}/Sanger_workflow_variants/batch07/
-readonly DKFZ_DIR=${BASEDIR}/DKFZ_EMBL_workflow_variants/
-readonly MUSE_DIR=${BASEDIR}/Broad_workflow_variants/batch02/muse_vcf/
-readonly BROAD_DIR=${BASEDIR}/Broad_workflow_variants/batch02/broad_vcf/
+readonly SANGER_DIRS="${BASEDIR}/Sanger_workflow_variants/batch07/"
+readonly DKFZ_DIRS="${BASEDIR}/DKFZ_EMBL_workflow_variants/batch01 ${BASEDIR}/DKFZ_EMBL_workflow_variants/batch02 ${BASEDIR}/DKFZ_EMBL_workflow_variants/staging" 
+readonly MUSE_DIRS="${BASEDIR}/Broad_workflow_variants/batch02/muse_vcf/ ${BASEDIR}/Broad_workflow_variants/staging/muse_vcf/"
+readonly BROAD_DIRS="${BASEDIR}/Broad_workflow_variants/batch02/broad_vcf/ ${BASEDIR}/Broad_workflow_variants/staging/broad_vcf/"
 
 readonly NORMED_INDEL_DIR=./indel_normed_vcfs
 

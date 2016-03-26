@@ -15,19 +15,19 @@ function sample_and_filename {
     fi
 }
 
-sample_and_filename ${BROAD_DIR} snv_mnv | sort > tmp.snv.broad
-sample_and_filename ${DKFZ_DIR} snv_mnv | sort > tmp.snv.dkfz
-sample_and_filename ${SANGER_DIR} snv_mnv | sort > tmp.snv.sanger
-sample_and_filename ${MUSE_DIR} snv_mnv | sort > tmp.snv.muse
+for dir in ${BROAD_DIRS}; do sample_and_filename ${dir} snv_mnv; done | sort > tmp.snv.broad
+for dir in ${DKFZ_DIRS}; do sample_and_filename ${dir} snv_mnv; done | sort > tmp.snv.dkfz
+for dir in ${SANGER_DIRS}; do sample_and_filename ${dir} snv_mnv; done | sort > tmp.snv.sanger
+for dir in ${MUSE_DIRS}; do sample_and_filename ${dir} snv_mnv; done | sort > tmp.snv.muse
 
 join tmp.snv.broad tmp.snv.dkfz > tmp.snv.broad_dkfz
 join tmp.snv.broad_dkfz tmp.snv.sanger > tmp.snv.broad_dkfz_sanger
 join tmp.snv.broad_dkfz_sanger tmp.snv.muse > filelist.snv_mnv.txt
 rm tmp.snv.{broad,dkfz,sanger,muse,broad_dkfz,broad_dkfz_sanger}
 
-sample_and_filename ${BROAD_DIR} indel | sort > tmp.indel.broad
-sample_and_filename ${DKFZ_DIR} indel | sort > tmp.indel.dkfz
-sample_and_filename ${SANGER_DIR} indel | sort > tmp.indel.sanger
+for dir in ${BROAD_DIRS}; do sample_and_filename ${dir} indel; done | sort > tmp.indel.broad
+for dir in ${DKFZ_DIRS}; do sample_and_filename ${dir} indel; done | sort > tmp.indel.dkfz
+for dir in ${SANGER_DIRS}; do sample_and_filename ${dir} indel; done | sort > tmp.indel.sanger
 
 join tmp.indel.broad tmp.indel.dkfz > tmp.indel.broad_dkfz
 join tmp.indel.broad_dkfz tmp.indel.sanger > filelist.indel.txt
