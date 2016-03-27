@@ -33,10 +33,10 @@ fi
 filenamelist=$( ./analysis/filenames-from-sample.sh $SAMPLE ${VARIANT} )
 read -r -a filenames <<< "${filenamelist}"
 
+mkdir -p annotated/${VARIANT}
+
 module load python/2.7.2
 module load gcc/4.8.1 openblas python-packages/2
-
-mkdir -p annotated/${VARIANT}
 
 function addheaders {
     sed -e '/#CHROM/i\
@@ -45,7 +45,7 @@ function addheaders {
 ##FILTER=<ID=LOWSUPPORT,Description="Not called by enough callers in ensemble">' 
 }
 
-if [ ${VARIANT} == "snv_mnv"]
+if [ ${VARIANT} == "snv_mnv" ]
 then
     ./analysis/annotate_vaf.py $merged \
         -b ${filenames[0]} \
