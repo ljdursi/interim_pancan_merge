@@ -24,7 +24,7 @@ echo "INDELs: Method 1"
 ls ${INDEL_MERGE_DIR}/*vcf \
     | sort -R \
     | head -n ${NSAMPLES} \
-    | xargs -I {} ./analysis/double_check.sh {} indel
+    | xargs -I {} ./analysis/double_check.sh {} indel_normed
 
 # test with python
 merged_samples=$( ls $SNV_MERGE_DIR/*vcf \
