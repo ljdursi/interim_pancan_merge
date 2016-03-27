@@ -12,5 +12,5 @@ echo "Merging variants: ${variants}"
 for variant in ${variants}
 do
     awk '{print $1}' filelist.${variant}.txt \
-        | parallel -j $NJOBS ./analysis/merged_vaf_by_sample.sh
+        | parallel -j $NJOBS ./analysis/merged_vaf_by_sample.sh {} ${variant}
 done
