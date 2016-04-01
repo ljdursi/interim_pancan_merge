@@ -1,0 +1,20 @@
+#!/bin/bash
+source paths
+
+# build a table of pancanid vs project code
+readonly SAMPLE_PROJ=./sample_proj.txt
+tail -n +2 ${FILE_TSV} \
+    | awk '{printf "%s\t%s\n", $22,$2}' \
+    | sort \
+        > $SAMPLE_PROJ
+
+for variant_type in "snv_mnv" "indel_normed"
+do
+    zegrep -cvH "(^#|LOWSUPPORT)" annotated/${variant_type}/*vcf.gz \
+        | sed -e "s#annotated/${variant_type}/##" -e "s/\.merged\.somatic\.${variant_type}\.vcf\.gz:/ /" \
+        | awk -v var=${variant_type} '{printf "%s\t%s\t%d\n", $1, var, $2}' \
+        | sort \
+            > ${variant_type}.tmp
+    join $SAMPLE_PROJ ${variant_type}.tmp > ${variant_type}.summary.tsv
+    rm ${variant_type}.tmp
+done
